@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#101c2f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="拾词六级">
+  <title>拾词 · CET-6 阅读与记忆</title>
+  <meta name="description" content="每日一篇六级阅读，把文中高频词放进多轮记忆，再获得当天学习诊断。">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="apple-touch-icon" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css?v=2">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#today" aria-label="拾词首页"><span class="brand-mark">拾</span><span><strong>拾词</strong><small>CET-6</small></span></a>
+      <nav class="side-nav" aria-label="主导航">
+        <button class="nav-item active" data-view="today">今日训练</button>
+        <button class="nav-item" data-view="words">高频词库</button>
+        <button class="nav-item" data-view="report">学习报告</button>
+        <button class="nav-item" data-view="settings">设置</button>
+      </nav>
+      <div class="side-note"><b>先在语境里理解，</b><br>再在遗忘前重逢。</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><p class="date-label" id="todayLabel"></p><h1 id="pageTitle">今日训练</h1></div>
+        <div class="header-actions"><span class="sync-pill"><i></i>已存于本机</span><button class="icon-btn" id="installQuick" aria-label="安装到手机"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg></button></div>
+      </header>
+
+      <section class="view active" id="view-today">
+        <nav class="journey" aria-label="今日学习流程">
+          <button class="journey-step active" data-phase="reading"><span>1</span><b>阅读理解</b><small>理解语境</small></button>
+          <i></i>
+          <button class="journey-step" data-phase="memory"><span>2</span><b>多轮记词</b><small>主动确认</small></button>
+          <i></i>
+          <button class="journey-step" data-phase="summary"><span>3</span><b>今日总结</b><small>诊断建议</small></button>
+        </nav>
+
+        <section class="phase active" id="phase-reading">
+          <div class="reading-layout">
+            <article class="passage-panel">
+              <header class="content-head"><div><p id="passageMeta"></p><h2 id="passageTitle"></h2></div><button class="text-action" id="readAloudBtn"><svg viewBox="0 0 24 24"><path d="M5 9v6h4l5 4V5L9 9H5Zm12 1c1 1.3 1 2.7 0 4m2-7c2.8 3.3 2.8 6.7 0 10"/></svg>朗读</button></header>
+              <div class="passage-body" id="passageBody"></div>
+              <div class="vocab-preview"><b>文中今日词</b><div id="passageWords"></div><p>点按文中的高亮词可随时查看中文释义。</p></div>
+            </article>
+            <aside class="question-panel">
+              <div class="question-head"><div><h2>回答问题</h2><p id="questionProgress">0 / 3 已作答</p></div><span id="readingTimer">00:00</span></div>
+              <div id="questionList"></div>
+              <p class="form-error" id="readingError" hidden>请先完成全部题目。</p>
+              <button class="primary-btn" id="submitReading">提交答案并查看解析</button>
+              <div class="reading-result" id="readingResult" hidden></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="phase" id="phase-memory">
+          <div class="memory-toolbar">
+            <div><p id="roundLabel">第 1 轮</p><h2>在你准备好之前，不会自动结束</h2><span id="roundHint">先理解单词，再主动发出“记完了”的信号。</span></div>
+            <div class="round-progress"><b id="roundCounter">1 / 8</b><div><i id="roundMeter"></i></div></div>
+          </div>
+          <div class="memory-layout">
+            <section class="memory-stage">
+              <article class="word-card" id="wordCard" tabindex="0" aria-label="单词卡片，点击翻面">
+                <div class="card-face card-front">
+                  <button class="speak-btn" id="speakWord" aria-label="朗读单词"><svg viewBox="0 0 24 24"><path d="M5 9v6h4l5 4V5L9 9H5Zm12 1c1 1.3 1 2.7 0 4"/></svg></button>
+                  <span class="source-chip">来自今日阅读</span><h3 id="wordText"></h3><p id="wordPhonetic"></p><small>点按卡片查看释义与原文语境</small>
+                </div>
+                <div class="card-face card-back">
+                  <span id="wordPos"></span><h3 id="wordMeaning"></h3><div class="word-context"><b>原文语境</b><p id="wordContext"></p></div><div class="word-context"><b>常用搭配</b><p id="wordCollocation"></p></div>
+                </div>
+              </article>
+              <button class="signal-btn" id="memorySignal">这个词我记完了</button>
+              <div class="rating-panel" id="ratingPanel" hidden>
+                <div><b>现在回想：它在文中的意思是什么？</b><span>你的判断会决定下一轮出现顺序</span></div>
+                <div class="rating-row">
+                  <button data-rating="again"><b>忘了</b><small>下一轮最先出现</small></button>
+                  <button data-rating="hard"><b>模糊</b><small>下一轮重点复习</small></button>
+                  <button data-rating="good"><b>记住</b><small>下一轮再确认</small></button>
+                  <button data-rating="easy"><b>太简单</b><small>暂时移出下一轮</small></button>
+                </div>
+              </div>
+            </section>
+            <aside class="round-board">
+              <h2>本轮词表</h2><p>状态会在你评级后更新。</p><div id="roundWordList"></div>
+              <div class="curve-note"><svg viewBox="0 0 24 24"><path d="M4 17c4-8 7 1 11-7 2-4 4-3 5-5"/></svg><p><b>间隔仍在后台生效</b><br>多轮训练用于当日即时加固，长期复习按 10 分钟、1 天、2 天、4 天、7 天、15 天与 30 天安排。</p></div>
+            </aside>
+          </div>
+          <section class="round-complete" id="roundComplete" hidden>
+            <div><span id="roundStamp">ROUND 1</span><h2>这一轮完成了</h2><p id="roundRecap"></p></div>
+            <div class="round-actions"><button class="secondary-btn" id="finishToday">我已完成今日单词记忆</button><button class="primary-btn" id="nextRound">继续下一轮</button></div>
+          </section>
+        </section>
+
+        <section class="phase" id="phase-summary">
+          <div class="summary-sheet">
+            <header><div><p id="summaryDate"></p><h2 id="summaryHeadline">今天的学习总结</h2></div><span class="grade" id="summaryGrade">—</span></header>
+            <div class="summary-metrics"><div><b id="summaryReading">—</b><span>阅读正确率</span></div><div><b id="summaryRounds">0</b><span>记忆轮数</span></div><div><b id="summaryWords">0</b><span>训练词数</span></div><div><b id="summaryMinutes">0</b><span>投入分钟</span></div></div>
+            <section class="assessment"><h3>今日评价</h3><p id="assessmentText"></p></section>
+            <div class="advice-grid"><section><h3>需要回看的词</h3><div id="weakWords"></div></section><section><h3>接下来怎么学</h3><ol id="adviceList"></ol></section></div>
+            <div class="summary-actions"><button class="secondary-btn" id="morePractice">再来一轮巩固</button><button class="primary-btn" data-view="report">查看长期报告</button></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-words">
+        <div class="library-toolbar"><label class="search-box"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg><input id="wordSearch" type="search" placeholder="搜索单词、释义或搭配"></label><div class="filters" id="topicFilters"><button class="active" data-topic="全部">全部</button><button data-topic="阅读">阅读</button><button data-topic="听力">听力</button><button data-topic="写作">写作</button><button data-topic="翻译">翻译</button></div></div>
+        <p class="library-count" id="libraryCount"></p><div class="word-grid" id="wordGrid"></div>
+      </section>
+
+      <section class="view" id="view-report">
+        <header class="report-intro"><div><h2>学习报告</h2><p>把每天的阅读表现与词汇记忆放在同一条时间线上。</p></div><div class="report-score"><b id="retentionRate">—</b><span>综合记忆率</span></div></header>
+        <div class="progress-grid"><article class="chart-card"><div class="card-title"><h2>最近 7 天训练量</h2><span>词次</span></div><div class="bars" id="weekBars"></div></article><article class="stage-card"><div class="card-title"><h2>词汇记忆阶段</h2><span>词数</span></div><div id="stageRows"></div></article></div>
+        <section class="history-panel"><div class="card-title"><h2>每日总结</h2><span>保存在本机</span></div><div id="dailyHistory"></div></section>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="settings-list">
+          <article><div><h2>阅读后进入词汇训练</h2><p>每日新词优先取自当天文章；到期复习词会排在后面。</p></div><span class="setting-state">已开启</span></article>
+          <article><div><h2>添加到手机主屏幕</h2><p>安装后可像 App 一样打开，并支持离线使用。</p></div><button class="action-btn" id="installBtn">安装网页</button></article>
+          <article><div><h2>备份学习记录</h2><p>换手机前导出备份，新设备上可再导入。</p></div><div class="button-pair"><button class="action-btn ghost" id="exportBtn">导出</button><button class="action-btn ghost" id="importBtn">导入</button><input id="importFile" type="file" accept="application/json" hidden></div></article>
+          <article><div><h2>清空学习记录</h2><p>移除这台设备上的全部学习记录。</p></div><button class="danger-btn" id="resetBtn">清空数据</button></article>
+        </div>
+        <div class="privacy-note"><b>数据只留在这台设备。</b><p>拾词无需账号，不上传答题、评级或学习报告。清理浏览器数据前请先导出备份。</p></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="移动端主导航">
+      <button class="active" data-view="today"><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM8 3v4m8-4v4M4 10h16"/></svg>今日</button>
+      <button data-view="words"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V4Zm2 12h12M9 8h6"/></svg>词库</button>
+      <button data-view="report"><svg viewBox="0 0 24 24"><path d="M5 19V9m7 10V5m7 14v-7"/></svg>报告</button>
+      <button data-view="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A7 7 0 0 0 15 6l-.3-2.6h-4L10.4 6A7 7 0 0 0 8.9 7L6.5 6 4.5 9.5l2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a7 7 0 0 0 1.5 1l.3 2.6h4L15 18a7 7 0 0 0 1.5-1l2.4 1 2-3.5-2-1.5a7 7 0 0 0 .1-1Z"/></svg>设置</button>
+    </nav>
+  </div>
+  <div class="word-popover" id="wordPopover" hidden></div><div class="toast" id="toast" role="status"></div>
+  <dialog id="installDialog"><button class="dialog-close" aria-label="关闭">×</button><span class="brand-mark">拾</span><h2>把拾词放到主屏幕</h2><div id="installGuide"></div></dialog>
+  <dialog id="resetDialog"><h2>确定清空学习记录？</h2><p>阅读成绩、记忆轮次、连续天数与历史记录都会从这台设备移除，无法撤销。</p><div class="dialog-actions"><button id="cancelReset">取消</button><button class="confirm-danger" id="confirmReset">确认清空</button></div></dialog>
+  <script>window.SHICI_DATA_ONLY=true</script>
+  <script src="./app.js?v=2"></script>
+  <script src="./learn.js?v=2"></script>
+</body>
+</html>
+
